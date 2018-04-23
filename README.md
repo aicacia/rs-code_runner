@@ -25,13 +25,13 @@ takes json in the form
 			content: "fn main() { println!(\"Hello, world!\"); }"
 		}
 	],
-	"stdin": ""
+	"argv": []
 }
 ```
 
 ## Call from Command line
 
 ```bash
-$ runner "{\"language\":\"rust\",\"files\":[{\"name\":\"main.rs\",\"content\":\"fn main() { println!(\\\"Hello, world\\\"); }\"}],\"stdin\":\"\"}"
+$ runner "{\"language\":\"rust\",\"files\":[{\"name\":\"main.rs\",\"content\":\"fn main() { println!(\\\"Hello, world\\\"); }\"}],\"argv\":[]}"
 "{\"stdout\":\"Hello, world\\n\",\"stderr\":\"\",\"error\":null}"
 ```

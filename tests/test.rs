@@ -13,7 +13,7 @@ macro_rules! run {
         let input = ::runner::Input {
             language: lang.into(),
             files: input_files,
-            stdin: String::new(),
+            argv: Vec::new(),
         };
 
         match ::runner::run(&input) {

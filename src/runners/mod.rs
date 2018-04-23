@@ -16,17 +16,15 @@ pub fn run(input: &Input) -> Result {
         Err(error) => return Err(error.into()),
     };
 
-    let stdin = input.stdin.split(" ").collect::<Vec<&str>>();
-
     match input.language.as_str() {
-        "c" => c::run(&dir, &files, &stdin),
-        "cpp" | "c++" => cpp::run(&dir, &files, &stdin),
-        "javascript" | "node" | "ecmascript" => ecma_script::run(&dir, &files, &stdin),
-        "java" => java::run(&dir, &files, &stdin),
-        "elixir" => elixir::run(&dir, &files, &stdin),
-        "python" => python::run(&dir, &files, &stdin),
-        "ruby" => ruby::run(&dir, &files, &stdin),
-        "rust" => rust::run(&dir, &files, &stdin),
+        "c" => c::run(&dir, &files, &input.argv),
+        "cpp" | "c++" => cpp::run(&dir, &files, &input.argv),
+        "javascript" | "node" | "ecmascript" => ecma_script::run(&dir, &files, &input.argv),
+        "java" => java::run(&dir, &files, &input.argv),
+        "elixir" => elixir::run(&dir, &files, &input.argv),
+        "python" => python::run(&dir, &files, &input.argv),
+        "ruby" => ruby::run(&dir, &files, &input.argv),
+        "rust" => rust::run(&dir, &files, &input.argv),
         _ => Err(Error::NotSupported(input.language.clone())),
     }
 }

@@ -6,7 +6,7 @@ use tempfile::TempDir;
 use super::super::Result;
 
 #[inline]
-pub fn run(dir: &TempDir, files: &[PathBuf], stdin: &[&str]) -> Result {
+pub fn run(dir: &TempDir, files: &[PathBuf], argv: &[String]) -> Result {
     let base_name = &files[0];
     let class_name = files[0].file_stem().unwrap();
 
@@ -20,7 +20,7 @@ pub fn run(dir: &TempDir, files: &[PathBuf], stdin: &[&str]) -> Result {
                 Command::new("java")
                     .current_dir(dir.path())
                     .arg(class_name)
-                    .args(stdin)
+                    .args(argv)
                     .output()
             ))
         } else {

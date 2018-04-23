@@ -6,8 +6,8 @@ use tempfile::TempDir;
 use super::super::Result;
 
 #[inline]
-pub fn run(_dir: &TempDir, files: &[PathBuf], stdin: &[&str]) -> Result {
+pub fn run(_dir: &TempDir, files: &[PathBuf], argv: &[String]) -> Result {
     Ok(try_io!(
-        Command::new("ruby").arg(&files[0]).args(stdin).output()
+        Command::new("ruby").arg(&files[0]).args(argv).output()
     ))
 }

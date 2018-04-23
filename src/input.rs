@@ -15,7 +15,7 @@ pub struct InputFile {
 pub struct Input {
     pub language: String,
     pub files: Vec<InputFile>,
-    pub stdin: String,
+    pub argv: Vec<String>,
 }
 
 impl Input {

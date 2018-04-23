@@ -6,7 +6,7 @@ use tempfile::TempDir;
 use super::super::{create_out_file, Result};
 
 #[inline]
-pub fn run(dir: &TempDir, files: &[PathBuf], stdin: &[&str]) -> Result {
+pub fn run(dir: &TempDir, files: &[PathBuf], argv: &[String]) -> Result {
     let out_file_path = create_out_file(dir, "a.out")?;
 
     match Command::new("g++")
@@ -16,7 +16,7 @@ pub fn run(dir: &TempDir, files: &[PathBuf], stdin: &[&str]) -> Result {
         .output()
     {
         Ok(output) => if output.status.success() {
-            Ok(try_io!(Command::new(out_file_path).args(stdin).output()))
+            Ok(try_io!(Command::new(out_file_path).args(argv).output()))
         } else {
             Ok(output.into())
         },
