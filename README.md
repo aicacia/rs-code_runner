@@ -4,13 +4,13 @@ code runner for lanuages
 
 ## support
 
-C
-Cpp
-ECMAScript/JavaScript
-Elixir
-Python
-Ruby
-Rust
+*   C
+*   Cpp
+*   ECMAScript/JavaScript
+*   Elixir
+*   Python
+*   Ruby
+*   Rust
 
 ## Usage
 
@@ -33,5 +33,5 @@ takes json in the form
 
 ```bash
 $ runner "{\"language\":\"rust\",\"files\":[{\"name\":\"main.rs\",\"content\":\"fn main() { println!(\\\"Hello, world\\\"); }\"}],\"argv\":[]}"
-"{\"stdout\":\"Hello, world\\n\",\"stderr\":\"\",\"error\":null}"
+{\"stdout\":\"Hello, world\\n\",\"stderr\":\"\",\"error\":null}
 ```

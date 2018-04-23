@@ -41,3 +41,10 @@ impl From<String> for Output {
         Self::from(Error::IO(error))
     }
 }
+
+impl<'a> From<&'a str> for Output {
+    #[inline]
+    fn from(error: &'a str) -> Self {
+        Self::from(Error::IO(error.to_owned()))
+    }
+}

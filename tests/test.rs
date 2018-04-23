@@ -46,7 +46,7 @@ fn elixir_test() {
 
 #[test]
 fn java_test() {
-    run!("java", "Main.java", "snippets/main.java");
+    run!("java", "Main.java", "snippets/Main.java");
 }
 
 #[test]
