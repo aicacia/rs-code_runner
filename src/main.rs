@@ -3,13 +3,13 @@ extern crate serde;
 extern crate serde_json;
 
 use runner::Output;
-use std::env::args;
+use std::io;
 
 fn main() {
-    let argv = args().collect::<Vec<String>>();
+    let mut input_json = String::new();
 
-    match argv.get(1) {
-        Some(input_json) => match serde_json::from_str(input_json) {
+    match io::stdin().read_line(&mut input_json) {
+        Ok(_) => match serde_json::from_str(&input_json) {
             Ok(input) => match runner::run(&input) {
                 Ok(output) => println!("{}", serde_json::to_string(&Output::from(output)).unwrap()),
                 Err(error) => println!("{}", serde_json::to_string(&Output::from(error)).unwrap()),
@@ -19,9 +19,9 @@ fn main() {
                 serde_json::to_string(&Output::from(error.to_string())).unwrap()
             ),
         },
-        None => println!(
+        Err(error) => println!(
             "{}",
-            serde_json::to_string(&Output::from("Invalid Argument")).unwrap()
+            serde_json::to_string(&Output::from(error.to_string())).unwrap()
         ),
     }
 }

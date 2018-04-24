@@ -1,6 +1,6 @@
 # rs-runner
 
-code runner for lanuages
+code runner for languages
 
 ## support
 
@@ -32,6 +32,7 @@ takes json in the form
 ## Call from Command line
 
 ```bash
-$ runner "{\"language\":\"rust\",\"files\":[{\"name\":\"main.rs\",\"content\":\"fn main() { println!(\\\"Hello, world\\\"); }\"}],\"argv\":[]}"
-{\"stdout\":\"Hello, world\\n\",\"stderr\":\"\",\"error\":null}
+$ runner
+{"language": "rust", "files": [{"name": "main.rs","content": "fn main() { println!(\"Hello, world\"); }"}], "argv": []}
+{"stdout":"Hello, world\n","stderr":"","error":null}
 ```

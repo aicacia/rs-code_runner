@@ -6,7 +6,7 @@ authors = ["nathanfaucett <nathanfaucett@gmail.com>"]
 keywords = ["code", "runner"]
 categories = []
 
-description = "code runner for lanuages"
+description = "code runner for languages"
 license = "MIT"
 readme = "README.md"
 repository = "https://gitlab.com/nathanfaucett/rs-runner.git"
