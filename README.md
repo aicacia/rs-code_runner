@@ -21,8 +21,8 @@ takes json in the form
 	"language": "rust",
 	"files": [
 		{
-			name: "main.rs",
-			content: "fn main() { println!(\"Hello, world!\"); }"
+			"name": "main.rs",
+			"content": "fn main() { println!(\"Hello, world!\"); }"
 		}
 	],
 	"argv": []
