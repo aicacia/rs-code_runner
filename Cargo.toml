@@ -3,10 +3,10 @@ name = "code_runner"
 version = "0.1.0"
 authors = ["nathanfaucett <nathanfaucett@gmail.com>"]
 
-keywords = ["code", "code_runner"]
+keywords = ["code", "language", "runner"]
 categories = []
 
-description = "code code_runner for languages"
+description = "code runner for languages"
 license = "MIT"
 readme = "README.md"
 repository = "https://gitlab.com/nathanfaucett/rs-code_runner.git"

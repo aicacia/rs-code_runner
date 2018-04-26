@@ -1,6 +1,6 @@
 # rs-code_runner
 
-code code_runner for languages
+code runner for languages
 
 ## support
 
