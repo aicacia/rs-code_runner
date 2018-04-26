@@ -3,16 +3,25 @@ extern crate serde;
 extern crate serde_json;
 
 use runner::Output;
-use std::io;
+use std::io::{self, Result};
 
-fn main() -> io::Result<()> {
-    let mut input_json = String::new();
+#[inline]
+fn read_stdin() -> Result<String> {
+    let mut buf = String::new();
+    io::stdin().read_line(&mut buf)?;
+    Ok(buf)
+}
 
-    // Docker writes an empty string to stdin
-    while input_json.trim().is_empty() {
-        input_json.clear();
-        io::stdin().read_line(&mut input_json)?;
-    }
+fn main() {
+    let input_json = match read_stdin() {
+        Ok(string) => string,
+        Err(error) => {
+            return println!(
+                "{}",
+                serde_json::to_string(&Output::from(error.to_string())).unwrap()
+            )
+        }
+    };
 
     match serde_json::from_str(input_json.trim()) {
         Ok(input) => match runner::run(&input) {
@@ -24,6 +33,4 @@ fn main() -> io::Result<()> {
             serde_json::to_string(&Output::from(error.to_string())).unwrap()
         ),
     }
-
-    Ok(())
 }
