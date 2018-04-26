@@ -1,8 +1,8 @@
-extern crate runner;
+extern crate code_runner;
 extern crate serde;
 extern crate serde_json;
 
-use runner::Output;
+use code_runner::Output;
 use std::io::{self, Result};
 
 #[inline]
@@ -24,7 +24,7 @@ fn main() {
     };
 
     match serde_json::from_str(input_json.trim()) {
-        Ok(input) => match runner::run(&input) {
+        Ok(input) => match code_runner::run(&input) {
             Ok(output) => println!("{}", serde_json::to_string(&Output::from(output)).unwrap()),
             Err(error) => println!("{}", serde_json::to_string(&Output::from(error)).unwrap()),
         },

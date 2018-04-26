@@ -1,70 +1,42 @@
-extern crate runner;
+extern crate code_runner;
 
-macro_rules! run {
-    ($lang:expr, $name:expr, $path:expr) => {{
-        let lang = $lang;
-        let name = $name;
+macro_rules! test {
+    ($test:ident, $lang:expr, $name:expr, $path:expr) => {
+        #[test]
+        fn $test() {
+            let lang = $lang;
+            let name = $name;
 
-        let input_files = vec![::runner::InputFile {
-            name: name.into(),
-            content: include_str!($path).to_string(),
-        }];
+            let input_files = vec![::code_runner::InputFile {
+                name: name.into(),
+                content: include_str!($path).to_string(),
+            }];
 
-        let input = ::runner::Input {
-            language: lang.into(),
-            files: input_files,
-            argv: Vec::new(),
-        };
+            let input = ::code_runner::Input {
+                language: lang.into(),
+                files: input_files,
+                argv: Vec::new(),
+            };
 
-        match ::runner::run(&input) {
-            Ok(output) => {
-                if output.error.is_some() {
-                    panic!("{:#?}", output);
+            match ::code_runner::run(&input) {
+                Ok(output) => {
+                    if output.error.is_some() {
+                        panic!("{:#?}", output);
+                    }
+
+                    assert_eq!(output.stdout, "Hello, world!\n");
                 }
-
-                assert_eq!(output.stdout, "Hello, world!\n");
+                Err(error) => panic!("{:#?}", error),
             }
-            Err(error) => panic!("{:#?}", error),
         }
-    }};
+    };
 }
 
-#[test]
-fn c_test() {
-    run!("c", "main.c", "snippets/main.c");
-}
-
-#[test]
-fn cpp_test() {
-    run!("cpp", "main.cpp", "snippets/main.cpp");
-}
-
-#[test]
-fn elixir_test() {
-    run!("elixir", "main.ex", "snippets/main.ex");
-}
-
-#[test]
-fn java_test() {
-    run!("java", "Main.java", "snippets/Main.java");
-}
-
-#[test]
-fn ecmascript_test() {
-    run!("ecmascript", "main.js", "snippets/main.js");
-}
-
-#[test]
-fn python_test() {
-    run!("python", "main.py", "snippets/main.py");
-}
-
-#[test]
-fn ruby_test() {
-    run!("ruby", "main.rb", "snippets/main.rb");
-}
-
-#[test]
-fn rust_test() {
-    run!("rust", "main.rs", "snippets/main.rs");
-}
+test!(c_test, "c", "main.c", "snippets/main.c");
+test!(cpp_test, "cpp", "main.cpp", "snippets/main.cpp");
+test!(elixir_test, "elixir", "main.ex", "snippets/main.ex");
+test!(java_test, "java", "Main.java", "snippets/Main.java");
+test!(ecmascript_test, "ecmascript", "main.js", "snippets/main.js");
+test!(python_test, "python", "main.py", "snippets/main.py");
+test!(ruby_test, "ruby", "main.rb", "snippets/main.rb");
+test!(rust_test, "rust", "main.rs", "snippets/main.rs");

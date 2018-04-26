@@ -1,6 +1,6 @@
-# rs-runner
+# rs-code_runner
 
-code runner for languages
+code code_runner for languages
 
 ## support
 
@@ -34,7 +34,7 @@ takes json in the form
 ### Rust
 
 ```bash
-$ runner
+$ code_runner
 {"language": "rust", "files": [{"name": "main.rs","content": "fn main() { println!(\"Hello, world\"); }"}], "argv": []}
 {"stdout":"Hello, world\n","stderr":"","error":null}
 ```
@@ -42,7 +42,7 @@ $ runner
 ### ECMAScript/JavaScript
 
 ```bash
-$ runner
+$ code_runner
 {"language": "ecmascript", "files": [{"name": "main.js","content": "console.log(\"Hello, world!\");"}], "argv": []}
 {"stdout":"Hello, world\n","stderr":"","error":null}
 ```

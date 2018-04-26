@@ -9,11 +9,11 @@ mod input;
 mod output;
 #[macro_use]
 mod result;
-pub mod runners;
+pub mod code_runners;
 
 pub use self::create_out_file::create_out_file;
 pub use self::error::Error;
 pub use self::input::{Input, InputFile};
 pub use self::output::Output;
 pub use self::result::Result;
-pub use self::runners::run;
+pub use self::code_runners::run;
