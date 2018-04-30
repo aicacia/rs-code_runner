@@ -35,8 +35,10 @@ macro_rules! test {
 test!(c_test, "c", "main.c", "snippets/main.c");
 test!(cpp_test, "cpp", "main.cpp", "snippets/main.cpp");
 test!(elixir_test, "elixir", "main.ex", "snippets/main.ex");
+test!(golang_test, "golang", "main.go", "snippets/main.go");
 test!(java_test, "java", "Main.java", "snippets/Main.java");
 test!(ecmascript_test, "ecmascript", "main.js", "snippets/main.js");
+test!(lua_test, "lua", "main.lua", "snippets/main.lua");
 test!(python_test, "python", "main.py", "snippets/main.py");
 test!(ruby_test, "ruby", "main.rb", "snippets/main.rb");
 test!(rust_test, "rust", "main.rs", "snippets/main.rs");

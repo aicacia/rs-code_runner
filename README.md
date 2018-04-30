@@ -8,6 +8,9 @@ code runner for languages
 *   Cpp
 *   ECMAScript/JavaScript
 *   Elixir
+*   Go
+*   Java
+*   Lua
 *   Python
 *   Ruby
 *   Rust
