@@ -7,25 +7,27 @@ macro_rules! test {
             let lang = $lang;
             let name = $name;
 
-            let input_files = vec![::code_runner::InputFile {
-                name: name.into(),
-                content: include_str!($path).to_string(),
-            }];
+            let mut files = ::std::collections::HashMap::new();
 
-            let input = ::code_runner::Input {
-                language: lang.into(),
-                files: input_files,
-                argv: Vec::new(),
+            files.insert(name.into(), include_str!($path).to_string());
+
+            let build_input = ::code_runner::BuildInput {
+                lang: lang.into(),
+                files: files,
             };
+            let mut build_output = ::code_runner::BuildOutput::new(&build_input).unwrap();
 
-            match ::code_runner::run(&input) {
-                Ok(output) => {
-                    if output.error.is_some() {
-                        panic!("{:#?}", output);
+            match ::code_runner::compile(&mut build_output) {
+                Ok(_compile_output) => match ::code_runner::run(&build_output, &[]) {
+                    Ok(output) => {
+                        if output.error.is_some() {
+                            panic!("{:#?}", output);
+                        }
+
+                        assert_eq!(output.stdout, "Hello, world!\n");
                     }
-
-                    assert_eq!(output.stdout, "Hello, world!\n");
-                }
+                    Err(error) => panic!("{:#?}", error),
+                },
                 Err(error) => panic!("{:#?}", error),
             }
         }

@@ -9,6 +9,17 @@ pub struct Output {
     pub error: Option<Error>,
 }
 
+impl Default for Output {
+    #[inline]
+    fn default() -> Self {
+        Output {
+            stdout: String::new(),
+            stderr: String::new(),
+            error: None,
+        }
+    }
+}
+
 impl From<process::Output> for Output {
     #[inline]
     fn from(output: process::Output) -> Self {

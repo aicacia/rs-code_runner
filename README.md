@@ -21,14 +21,10 @@ takes json in the form
 
 ```json
 {
-	"language": "rust",
-	"files": [
-		{
-			"name": "main.rs",
-			"content": "fn main() { println!(\"Hello, world!\"); }"
-		}
-	],
-	"argv": []
+	"lang": "rust",
+	"files": {
+		"main.rs": "fn main() { println!(\"Hello, world!\"); }"
+	}
 }
 ```
 
@@ -38,14 +34,18 @@ takes json in the form
 
 ```bash
 $ code_runner
-{"language": "rust", "files": [{"name": "main.rs","content": "fn main() { println!(\"Hello, world\"); }"}], "argv": []}
+{"lang": "rust", "files": {"main.rs": "fn main() { let args = ::std::env::args().collect::<Vec<String>>(); println!(\"{}, {}\", args[1], args[2]); }"}}
+["Hello", "world!"]
 {"stdout":"Hello, world\n","stderr":"","error":null}
+^C
 ```
 
 ### ECMAScript/JavaScript
 
 ```bash
 $ code_runner
-{"language": "ecmascript", "files": [{"name": "main.js","content": "console.log(\"Hello, world!\");"}], "argv": []}
+{"lang": "ecmascript", "files": {"main.js": "console.log(process.argv.slice(2).join(\", \"));"}}
+["Hello", "world!"]
 {"stdout":"Hello, world\n","stderr":"","error":null}
+^C
 ```

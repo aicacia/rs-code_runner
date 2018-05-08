@@ -1,19 +1,27 @@
+#![feature(try_from)]
+
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 extern crate tempfile;
 
-mod create_out_file;
-mod error;
-mod input;
-mod output;
 #[macro_use]
-mod result;
-pub mod code_runners;
+mod error;
 
-pub use self::create_out_file::create_out_file;
+mod build_input;
+mod build_output;
+pub mod compilers;
+mod create_executable;
+mod lang;
+mod output;
+pub mod runners;
+
 pub use self::error::Error;
-pub use self::input::{Input, InputFile};
+
+pub use self::build_input::BuildInput;
+pub use self::build_output::BuildOutput;
+pub use self::compilers::compile;
+pub use self::create_executable::create_executable;
+pub use self::lang::Lang;
 pub use self::output::Output;
-pub use self::result::Result;
-pub use self::code_runners::run;
+pub use self::runners::run;
