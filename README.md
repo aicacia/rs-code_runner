@@ -35,7 +35,7 @@ takes json in the form
 ```bash
 $ code_runner
 {"lang": "rust", "files": {"main.rs": "fn main() { let args = ::std::env::args().collect::<Vec<String>>(); println!(\"{}, {}\", args[1], args[2]); }"}}
-{ "timeout": 1.0, "argv": ["Hello", "world!"] }
+{"timeout": 1.0, "argv": ["Hello", "world!"]}
 {"stdout":"Hello, world\n","stderr":"","error":null}
 ^C
 ```
@@ -45,7 +45,7 @@ $ code_runner
 ```bash
 $ code_runner
 {"lang": "ecmascript", "files": {"main.js": "console.log(process.argv.slice(2).join(\", \"));"}}
-{ "timeout": 1.0, "argv": ["Hello", "world!"] }
+{"timeout": 1.0, "argv": ["Hello", "world!"]}
 {"stdout":"Hello, world\n","stderr":"","error":null}
 ^C
 ```
