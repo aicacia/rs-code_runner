@@ -64,8 +64,8 @@ fn run(build_output: BuildOutput) {
         }
     };
 
-    match serde_json::from_str::<Vec<String>>(argv_json.trim()) {
-        Ok(argv) => match code_runner::run(&build_output, &argv) {
+    match serde_json::from_str(argv_json.trim()) {
+        Ok(input) => match code_runner::run(&build_output, &input) {
             Ok(output) => {
                 println!("{}", serde_json::to_string(&Output::from(output)).unwrap());
                 run(build_output)

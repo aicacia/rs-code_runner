@@ -1,6 +1,8 @@
-use super::super::{BuildOutput, Error, Output};
+use std::process::Command;
+
+use super::super::{BuildOutput, Error};
 
 #[inline]
-pub fn compile(_build_output: &mut BuildOutput) -> Result<Output, Error> {
-    Ok(Output::default())
+pub fn compile(_build_output: &mut BuildOutput) -> Result<Option<Command>, Error> {
+    Ok(None)
 }

@@ -1,16 +1,17 @@
 use std::process::Command;
 
-use super::super::{BuildOutput, Error, Output};
+use super::super::{BuildOutput, Error, Input};
 
 #[inline]
-pub fn run(build_output: &BuildOutput, argv: &[String]) -> Result<Output, Error> {
+pub fn run(build_output: &BuildOutput, input: &Input) -> Result<Command, Error> {
     let class_name = build_output.inputs[0].file_stem().unwrap();
 
-    Ok(try_io!(
-        Command::new("java")
-            .current_dir(build_output.root_dir.path().join("outputs"))
-            .arg(class_name)
-            .args(argv)
-            .output()
-    ))
+    let mut command = Command::new("java");
+
+    command
+        .current_dir(build_output.root_dir.path().join("outputs"))
+        .arg(class_name)
+        .args(&input.argv);
+
+    Ok(command)
 }

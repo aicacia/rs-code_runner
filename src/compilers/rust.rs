@@ -1,16 +1,17 @@
 use std::process::Command;
 
-use super::super::{BuildOutput, Error, Output};
+use super::super::{BuildOutput, Error};
 
 #[inline]
-pub fn compile(build_output: &mut BuildOutput) -> Result<Output, Error> {
+pub fn compile(build_output: &mut BuildOutput) -> Result<Option<Command>, Error> {
     let out_file_path = build_output.create_out_file()?;
 
-    Ok(try_io!(
-        Command::new("rustc")
-            .arg(&build_output.inputs[0])
-            .arg("-o")
-            .arg(&out_file_path)
-            .output()
-    ))
+    let mut command = Command::new("rustc");
+
+    command
+        .arg(&build_output.inputs[0])
+        .arg("-o")
+        .arg(&out_file_path);
+
+    Ok(Some(command))
 }

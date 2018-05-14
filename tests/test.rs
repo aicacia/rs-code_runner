@@ -18,16 +18,18 @@ macro_rules! test {
             let mut build_output = ::code_runner::BuildOutput::new(&build_input).unwrap();
 
             match ::code_runner::compile(&mut build_output) {
-                Ok(_compile_output) => match ::code_runner::run(&build_output, &[]) {
-                    Ok(output) => {
-                        if output.error.is_some() {
-                            panic!("{:#?}", output);
-                        }
+                Ok(_compile_output) => {
+                    match ::code_runner::run(&build_output, &::code_runner::Input::new(5.0, &[])) {
+                        Ok(output) => {
+                            if output.error.is_some() {
+                                panic!("{:#?}", output);
+                            }
 
-                        assert_eq!(output.stdout, "Hello, world!\n");
+                            assert_eq!(output.stdout, "Hello, world!\n");
+                        }
+                        Err(error) => panic!("{:#?}", error),
                     }
-                    Err(error) => panic!("{:#?}", error),
-                },
+                }
                 Err(error) => panic!("{:#?}", error),
             }
         }

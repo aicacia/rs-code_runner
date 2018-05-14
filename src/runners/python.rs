@@ -1,13 +1,10 @@
 use std::process::Command;
 
-use super::super::{BuildOutput, Error, Output};
+use super::super::{BuildOutput, Error, Input};
 
 #[inline]
-pub fn run(build_output: &BuildOutput, argv: &[String]) -> Result<Output, Error> {
-    Ok(try_io!(
-        Command::new("python")
-            .arg(&build_output.inputs[0])
-            .args(argv)
-            .output()
-    ))
+pub fn run(build_output: &BuildOutput, input: &Input) -> Result<Command, Error> {
+    let mut command = Command::new("python");
+    command.arg(&build_output.inputs[0]).args(&input.argv);
+    Ok(command)
 }

@@ -9,11 +9,11 @@ pub mod python;
 pub mod ruby;
 pub mod rust;
 
-use super::{BuildOutput, Error, Lang, Output};
+use super::{run_command, BuildOutput, Error, Lang, Output};
 
 #[inline]
 pub fn compile(build_output: &mut BuildOutput) -> Result<Output, Error> {
-    match &build_output.lang {
+    match match &build_output.lang {
         &Lang::C => c::compile(build_output),
         &Lang::Cpp => cpp::compile(build_output),
         &Lang::EcmaScript => ecma_script::compile(build_output),
@@ -24,5 +24,9 @@ pub fn compile(build_output: &mut BuildOutput) -> Result<Output, Error> {
         &Lang::Python => python::compile(build_output),
         &Lang::Ruby => ruby::compile(build_output),
         &Lang::Rust => rust::compile(build_output),
+    } {
+        Ok(Some(command)) => run_command(command, 60.0),
+        Ok(None) => Ok(Output::default()),
+        Err(e) => Err(e),
     }
 }

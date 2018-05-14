@@ -3,6 +3,7 @@ use std::process::{ExitStatus, Output};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub enum Error {
+    Timeout,
     Terminated,
     Code(i32),
     NotSupported(String),
