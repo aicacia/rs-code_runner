@@ -1,6 +1,11 @@
 extern crate code_runner;
 extern crate serde_json;
 
+use code_runner::{compile, run, BuildInput, BuildOutput, Error, Input};
+use std::collections::HashMap;
+use std::io::{BufRead, BufReader, Write};
+use std::process::{Command, Stdio};
+
 macro_rules! test {
     ($test:ident, $lang:expr, $name:expr, $path:expr) => {
         #[test]
@@ -8,30 +13,28 @@ macro_rules! test {
             let lang = $lang;
             let name = $name;
 
-            let mut files = ::std::collections::HashMap::new();
+            let mut files = HashMap::new();
 
             files.insert(name.into(), include_str!($path).to_string());
 
-            let build_input = ::code_runner::BuildInput {
-                timeout: 60.0,
+            let build_input = BuildInput {
+                timeout: 10.0,
                 lang: lang.into(),
                 files: files,
             };
-            let mut build_output = ::code_runner::BuildOutput::new(&build_input).unwrap();
+            let mut build_output = BuildOutput::new(&build_input).unwrap();
 
-            match ::code_runner::compile(&mut build_output) {
-                Ok(_compile_output) => {
-                    match ::code_runner::run(&build_output, &::code_runner::Input::new(10.0, &[])) {
-                        Ok(output) => {
-                            if output.error.is_some() {
-                                panic!("{:#?}", output);
-                            }
-
-                            assert_eq!(output.stdout, "Hello, world!\n");
+            match compile(&mut build_output) {
+                Ok(_compile_output) => match run(&build_output, &Input::new(1.0, &[])) {
+                    Ok(output) => {
+                        if output.error.is_some() {
+                            panic!("{:#?}", output);
                         }
-                        Err(error) => panic!("{:#?}", error),
+
+                        assert_eq!(output.stdout, "Hello, world!\n");
                     }
-                }
+                    Err(error) => panic!("{:#?}", error),
+                },
                 Err(error) => panic!("{:#?}", error),
             }
         }
@@ -53,13 +56,6 @@ macro_rules! test_repl {
     ($test:ident, $lang:expr, $name:expr, $path:expr) => {
         #[test]
         fn $test() {
-            use std::collections::HashMap;
-            use std::io::{BufRead, BufReader, Write};
-            use std::process::{Command, Stdio};
-
-            use code_runner::{BuildInput, Input};
-            use serde_json;
-
             let lang = $lang.to_owned();
             let name = $name.to_owned();
 
@@ -81,7 +77,7 @@ macro_rules! test_repl {
                 files.insert(name, include_str!($path).to_string());
 
                 let build_input = BuildInput {
-                    timeout: 60.0,
+                    timeout: 10.0,
                     lang: lang,
                     files: files,
                 };
@@ -106,7 +102,7 @@ macro_rules! test_repl {
 
             child.stdin.as_mut().map(|stdin| {
                 let input = Input {
-                    timeout: 10.0,
+                    timeout: 1.0,
                     argv: Vec::new(),
                 };
                 let input_json = serde_json::to_string(&input).unwrap();
@@ -151,3 +147,30 @@ test_repl!(lua_repl_test, "lua", "main.lua", "snippets/main.lua");
 test_repl!(python_repl_test, "python", "main.py", "snippets/main.py");
 test_repl!(ruby_repl_test, "ruby", "main.rb", "snippets/main.rb");
 test_repl!(rust_repl_test, "rust", "main.rs", "snippets/main.rs");
+
+#[test]
+fn timeout_test() {
+    let mut files = HashMap::new();
+
+    files.insert(
+        "main.js".to_owned(),
+        "setTimeout(function() { console.log(\"Hello, world!\"); }, 1000);".to_owned(),
+    );
+
+    let build_input = BuildInput {
+        timeout: 60.0,
+        lang: "javascript".to_owned(),
+        files: files,
+    };
+    let mut build_output = BuildOutput::new(&build_input).unwrap();
+
+    match compile(&mut build_output) {
+        Ok(_compile_output) => match run(&build_output, &Input::new(0.0, &[])) {
+            Ok(output) => {
+                panic!("Should return Error::Timeout returned {:#?}", output);
+            }
+            Err(error) => assert_eq!(error, Error::Timeout),
+        },
+        Err(error) => panic!("Should return Error::Timeout returned {:#?}", error),
+    }
+}

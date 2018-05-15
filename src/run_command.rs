@@ -1,14 +1,13 @@
-use tokio::prelude::task::current;
 use tokio::prelude::{Async, Future, Poll};
 use tokio::run;
 use tokio::timer::Delay;
 
 use std::io::Read;
-use std::process::{Child, Command, Stdio};
+use std::process::{Command, Stdio};
 use std::sync::mpsc::channel;
 use std::time::{Duration, Instant};
 
-use super::{Error, Output};
+use super::{AsyncChild, Error, Output};
 
 #[inline]
 pub fn run_command(mut command: Command, timeout: f32) -> Result<Output, Error> {
@@ -16,7 +15,7 @@ pub fn run_command(mut command: Command, timeout: f32) -> Result<Output, Error> 
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .spawn()?;
-    let child_future = ChildFuture::new(child, timeout);
+    let child_future = ChildFuture::new(AsyncChild::new(child), timeout);
 
     let (sender, receiver) = channel();
 
@@ -27,16 +26,15 @@ pub fn run_command(mut command: Command, timeout: f32) -> Result<Output, Error> 
 
     receiver.recv().unwrap()
 }
-
 struct ChildFuture {
-    child: Child,
+    child: AsyncChild,
     output: Option<Output>,
     delay: Delay,
 }
 
 impl ChildFuture {
     #[inline]
-    fn new(child: Child, timeout: f32) -> Self {
+    fn new(child: AsyncChild, timeout: f32) -> Self {
         ChildFuture {
             child: child,
             output: Some(Output::default()),
@@ -51,19 +49,23 @@ impl Future for ChildFuture {
 
     #[inline]
     fn poll(&mut self) -> Poll<Self::Item, Self::Error> {
-        {
-            let stdout = self.child.stdout.as_mut();
-            let output = self.output.as_mut();
-            stdout.map(|stdout| output.map(|output| stdout.read_to_string(&mut output.stdout)));
-        }
-        {
-            let stderr = self.child.stderr.as_mut();
-            let output = self.output.as_mut();
-            stderr.map(|stderr| output.map(|output| stderr.read_to_string(&mut output.stderr)));
-        }
+        match self.child.poll_exit() {
+            Ok(Async::Ready(status)) => {
+                {
+                    let stdout = self.child.inner.stdout.as_mut();
+                    let output = self.output.as_mut();
+                    stdout.map(|stdout| {
+                        output.map(|output| stdout.read_to_string(&mut output.stdout))
+                    });
+                }
+                {
+                    let stderr = self.child.inner.stderr.as_mut();
+                    let output = self.output.as_mut();
+                    stderr.map(|stderr| {
+                        output.map(|output| stderr.read_to_string(&mut output.stderr))
+                    });
+                }
 
-        match self.child.try_wait() {
-            Ok(Some(status)) => {
                 let mut output = self.output.take().unwrap();
 
                 output.error = if status.success() {
@@ -74,18 +76,16 @@ impl Future for ChildFuture {
 
                 return Ok(Async::Ready(output));
             }
-            Ok(None) => {
-                current().notify();
-            }
+            Ok(Async::NotReady) => (),
             Err(e) => return Err(e.into()),
         }
 
         match self.delay.poll() {
-            Ok(Async::NotReady) => Ok(Async::NotReady),
-            _ => {
+            Ok(Async::Ready(_)) => {
                 let _ = self.child.kill();
-                Err(Error::Timeout)
+                return Err(Error::Timeout);
             }
+            _ => return Ok(Async::NotReady),
         }
     }
 }

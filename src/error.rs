@@ -1,7 +1,7 @@
 use std::io;
 use std::process::{ExitStatus, Output};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub enum Error {
     Timeout,
     Terminated,
