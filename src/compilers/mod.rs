@@ -12,7 +12,7 @@ pub mod rust;
 use super::{run_command, BuildOutput, Error, Lang, Output};
 
 #[inline]
-pub fn compile(build_output: &mut BuildOutput) -> Result<Output, Error> {
+pub fn compile(build_output: &mut BuildOutput, timeout: f32) -> Result<Output, Error> {
     match match &build_output.lang {
         &Lang::C => c::compile(build_output),
         &Lang::Cpp => cpp::compile(build_output),
@@ -25,7 +25,7 @@ pub fn compile(build_output: &mut BuildOutput) -> Result<Output, Error> {
         &Lang::Ruby => ruby::compile(build_output),
         &Lang::Rust => rust::compile(build_output),
     } {
-        Ok(Some(command)) => run_command(command, 60.0),
+        Ok(Some(command)) => run_command(command, timeout),
         Ok(None) => Ok(Output::default()),
         Err(e) => Err(e),
     }

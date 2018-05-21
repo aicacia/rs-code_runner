@@ -18,14 +18,14 @@ macro_rules! test {
             files.insert(name.into(), include_str!($path).to_string());
 
             let build_input = BuildInput {
-                timeout: 10.0,
+                timeout: 60.0,
                 lang: lang.into(),
                 files: files,
             };
             let mut build_output = BuildOutput::new(&build_input).unwrap();
 
-            match compile(&mut build_output) {
-                Ok(_compile_output) => match run(&build_output, &Input::new(1.0, &[])) {
+            match compile(&mut build_output, build_input.timeout) {
+                Ok(_compile_output) => match run(&build_output, &Input::new(10.0, &[])) {
                     Ok(output) => {
                         if output.error.is_some() {
                             panic!("{:#?}", output);
@@ -44,7 +44,7 @@ macro_rules! test {
 test!(c_test, "c", "main.c", "snippets/main.c");
 test!(cpp_test, "cpp", "main.cpp", "snippets/main.cpp");
 test!(elixir_test, "elixir", "main.ex", "snippets/main.ex");
-test!(golang_test, "golang", "main.go", "snippets/main.go");
+test!(go_test, "go", "main.go", "snippets/main.go");
 test!(java_test, "java", "Main.java", "snippets/Main.java");
 test!(ecmascript_test, "ecmascript", "main.js", "snippets/main.js");
 test!(lua_test, "lua", "main.lua", "snippets/main.lua");
@@ -77,7 +77,7 @@ macro_rules! test_repl {
                 files.insert(name, include_str!($path).to_string());
 
                 let build_input = BuildInput {
-                    timeout: 10.0,
+                    timeout: 60.0,
                     lang: lang,
                     files: files,
                 };
@@ -102,7 +102,7 @@ macro_rules! test_repl {
 
             child.stdin.as_mut().map(|stdin| {
                 let input = Input {
-                    timeout: 1.0,
+                    timeout: 10.0,
                     argv: Vec::new(),
                 };
                 let input_json = serde_json::to_string(&input).unwrap();
@@ -135,7 +135,7 @@ macro_rules! test_repl {
 test_repl!(c_repl_test, "c", "main.c", "snippets/main.c");
 test_repl!(cpp_repl_test, "cpp", "main.cpp", "snippets/main.cpp");
 test_repl!(elixir_repl_test, "elixir", "main.ex", "snippets/main.ex");
-test_repl!(golang_repl_test, "golang", "main.go", "snippets/main.go");
+test_repl!(go_repl_test, "go", "main.go", "snippets/main.go");
 test_repl!(java_repl_test, "java", "Main.java", "snippets/Main.java");
 test_repl!(
     ecmascript_repl_test,
@@ -164,7 +164,7 @@ fn timeout_test() {
     };
     let mut build_output = BuildOutput::new(&build_input).unwrap();
 
-    match compile(&mut build_output) {
+    match compile(&mut build_output, build_input.timeout) {
         Ok(_compile_output) => match run(&build_output, &Input::new(0.0, &[])) {
             Ok(output) => {
                 panic!("Should return Error::Timeout returned {:#?}", output);

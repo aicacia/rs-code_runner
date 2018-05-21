@@ -31,7 +31,7 @@ fn repl_compile() {
                 }
             };
 
-            match compile(&mut build_output) {
+            match compile(&mut build_output, build_input.timeout) {
                 Ok(output) => {
                     println!("{}", serde_json::to_string(&Output::from(output)).unwrap());
                     repl_run(build_output)
