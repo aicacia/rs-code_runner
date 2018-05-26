@@ -1,21 +1,23 @@
 use tokio::prelude::{Async, Future, Poll};
 use tokio::run;
 use tokio::timer::Delay;
+use tokio_process::{Child, CommandExt};
 
 use std::io::Read;
 use std::process::{Command, Stdio};
 use std::sync::mpsc::channel;
 use std::time::{Duration, Instant};
 
-use super::{AsyncChild, Error, Output};
+use super::{Error, Output};
 
 #[inline]
 pub fn run_command(mut command: Command, timeout: f32) -> Result<Output, Error> {
     let child = command
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
-        .spawn()?;
-    let child_future = ChildFuture::new(AsyncChild::new(child), timeout);
+        .spawn_async()?;
+
+    let child_future = ChildFuture::new(child, timeout);
 
     let (sender, receiver) = channel();
 
@@ -27,14 +29,14 @@ pub fn run_command(mut command: Command, timeout: f32) -> Result<Output, Error> 
     receiver.recv().unwrap()
 }
 struct ChildFuture {
-    child: AsyncChild,
+    child: Child,
     output: Option<Output>,
     delay: Delay,
 }
 
 impl ChildFuture {
     #[inline]
-    fn new(child: AsyncChild, timeout: f32) -> Self {
+    fn new(child: Child, timeout: f32) -> Self {
         ChildFuture {
             child: child,
             output: Some(Output::default()),
@@ -49,17 +51,17 @@ impl Future for ChildFuture {
 
     #[inline]
     fn poll(&mut self) -> Poll<Self::Item, Self::Error> {
-        match self.child.poll_exit() {
+        match self.child.poll() {
             Ok(Async::Ready(status)) => {
                 {
-                    let stdout = self.child.inner.stdout.as_mut();
+                    let stdout = self.child.stdout().as_mut();
                     let output = self.output.as_mut();
                     stdout.map(|stdout| {
                         output.map(|output| stdout.read_to_string(&mut output.stdout))
                     });
                 }
                 {
-                    let stderr = self.child.inner.stderr.as_mut();
+                    let stderr = self.child.stderr().as_mut();
                     let output = self.output.as_mut();
                     stderr.map(|stderr| {
                         output.map(|output| stderr.read_to_string(&mut output.stderr))

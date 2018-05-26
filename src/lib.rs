@@ -6,11 +6,11 @@ extern crate serde_derive;
 extern crate serde_json;
 extern crate tempfile;
 extern crate tokio;
+extern crate tokio_process;
 
 #[macro_use]
 mod error;
 
-mod async_child;
 mod build_input;
 mod build_output;
 pub mod compilers;
@@ -24,7 +24,6 @@ pub mod runners;
 
 pub use self::error::Error;
 
-pub use self::async_child::AsyncChild;
 pub use self::build_input::BuildInput;
 pub use self::build_output::BuildOutput;
 pub use self::compilers::compile;
